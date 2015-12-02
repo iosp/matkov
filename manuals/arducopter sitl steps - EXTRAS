@@ -1,0 +1,97 @@
+Install Steps
+
+Please follow each of the steps below
+Step 1: Download ardupilot
+
+If you don’t have a copy of the ardupilot git repository then open a terminal and run:
+
+	git clone git://github.com/diydrones/ardupilot.git
+
+Step 2: JSBSim
+
+If you want to fly the fixed wing (plane) simulator then you will need JSBSim. In the same directory (your home directory) run this commands:
+
+	git clone git://github.com/tridge/jsbsim.git
+	apt-get install libtool automake autoconf libexpat1-dev
+
+Step 3: Install some required packages
+
+	sudo apt-get install python-matplotlib python-serial python-wxgtk2.8 python-lxml
+	sudo apt-get install python-scipy python-opencv ccache gawk git python-pip
+	sudo pip install pymavlink MAVProxy
+
+Step 4: Add some directories to your search path
+
+Add the following lines to the end of your “.bashrc” in your home directory (notice the . on the start of that filename).
+
+	export PATH=$PATH:$HOME/ardupilot/Tools/autotest
+	export PATH=$PATH:$HOME/MAVProxy
+	export PATH=$PATH:$HOME/mavlink/pymavlink/examples
+	export PATH=$PATH:$HOME/jsbsim/src
+	export PATH=/usr/lib/ccache:$PATH
+
+Then reload your PATH by using the “dot” command in a terminal
+
+	. ~/.bashrc
+
+Step 5: Build JSBSim and Run the following commands
+
+You will need JSMSim installed to run the plane version of SITL. You don’t need it for the copter or rover simulator.
+
+	cd jsbsim
+	./autogen.sh
+	make
+
+Step 6: Start SITL simulator
+
+To start the simulator first change directory to the vehicle directory. For example, for the fixed-wing code change to ardupilot/ArduPlane.
+
+Then start the simulator using sim_vehicle.sh. The first time you run it you should use the -w option to wipe the virtual EEPROM and load the right default parameters for your vehicle, and “make configure” to setup the build configuration.
+
+	make configure
+	sim_vehicle.sh -w
+
+After the default parameters are loaded you can start the simulator normally:
+
+	sim_vehicle.sh --console --map --aircraft test
+
+The sim_vehicle.sh has many useful options. Please run it with the -h option to get some help on available options.
+Step 7: Load a mission
+
+Let’s also load a test mission
+
+	wp load ../Tools/autotest/ArduPlane-Missions/CMAC-toff-loop.txt
+
+Now you have SITL installed you may want to start using it for ardupilot testing. Here are some common testing tasks and how to do them in SITL. Many of the following tasks involve setting parameters over MAVLink. You do that with “param set PARAMETERNAME VALUE”. Most of the interesting SITL specific parameters start with SIM_, so try this command:
+
+	param show SIM_*
+
+to see a list of all simulator controls. Note that when you change a parameter the value remains in the virtual EEPROM after you restart SITL, so remember to change it back if you don’t want it any more. If you want to revert to the default parameters then run sim_vehicle.sh with the -w flag to wipe all parameters and start again.
+Testing RC failsafe
+
+To test the behaviour of ardupilot when you lose RC control, set the parameter SIM_RC_FAIL=1, like this:
+
+	param set SIM_RC_FAIL 1
+
+this simulates loss of RC input completely. If you just want to simulate low throttle (below throttle failsafe level) then you can do that with the rc command:
+
+	rc 3 900
+
+Testing GPS failure
+
+To test a GPS losing lock, use SIM_GPS_DISABLE
+
+	param set SIM_GPS_DISABLE 1.
+
+You can also enable/disable a 2nd GPS using SIM_GPS2_ENABLE.
+Adding vibration
+
+To test the reaction to vibration, use SIM_ACC_RND
+
+	param set SIM_ACC_RND 3
+
+that adds 3 m/s/s accel noise
+
+
+
+

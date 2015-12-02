@@ -1,0 +1,11 @@
+/home/a/px4/PX4Firmware/makefiles//toolchain_gnu-arm-eabi.mk:57
+c@line53
+	4.7 TO 4.8
+
+in /ardupilot32/mk/board_avr.mk
+
+line 15#matkov add next line
+WARNFLAGS      +=   -Wunused-function -Wformat-nonliteral -Wunused-value
+line 19#matkov add next line
+WARNFLAGSCXX   +=   -Wformat-nonliteral -Wunused-value -Wunused-function
+

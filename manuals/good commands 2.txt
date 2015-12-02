@@ -1,0 +1,47 @@
+	ifconfig
+	route -n
+Once you have picked an IP address edit the /etc/network/interfaces file:
+
+	sudo nano /etc/network/interfaces
+
+Find the line which reads iface eth0 inet dhcp and replace it with:
+
+	iface eth0 inet static
+	address 192.168.1.20
+	netmask 255.255.255.0
+	gateway 192.168.1.1
+
+
+nmap -O
+
+export PATH=/opt/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin:$PATH
+If you would like to add the compiler to the PATH permanently edit /etc/environment.
+
+rsync local-file user@remote-host:remote-file
+rsync -avz /tmp/APMrover2.build/APMrover2.elf pi@192.168.1.3:/home/pi/
+
+
+
+	sudo ./APMrover2.elf -A udp:192.168.1.2:14550
+Where 192.168.1.2 is the IP address of the GCS.
+Arguments specify serial ports (TCP or UDP can be used instead of serial ports) :
+    -A is for telemetry
+    -B is for external GPS
+    -C is for secondary telemetry
+
+If you would like to transfer telemetry over the UART port on Navio you can specify it like this:
+	sudo ./APMrover2.elf -A udp:192.168.1.2:14550 -C /dev/ttyAMA0
+
+ 
+
+Please note that by default /dev/ttyAMA0 is used for Linux serial console, to disable it run rpi-serial-console once:
+	rpi-serial-console disable
+
+
+	pip install mavlink mavproxy console wp
+	mavproxy.py --master 192.168.1.2:14550 --console
+
+mv spidev_test.c ~/spi-dev/
+mkdir sdfs
+ls
+ll

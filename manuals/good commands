@@ -1,0 +1,38 @@
+echo $(date +%Y%m%d-%H%M)
+will out put "20141116-1455"
+
+
+
+
+Aliases
+alias somedir='cd /home/john/www/something/'
+Then you can type somedir to go to that directory. Add these to your .bashrc.
+
+Symbolic Links
+ln -s /long/path/to/some/other/folder /shortcut
+This will make a file at /shortcut which links to /long/path/to/some/other/folder. Then you can type cd /shortcut instead. The caveat of this is it fills up your root directory (or whichever directory you put the links in) pretty quick. I prefer aliases.
+
+
+
+ls -l
+sudo chown -R a: navio
+sudo chmod 666 -R /navio/
+
+
+If you are running linux then you can use the dd command to make a full backup of the image:
+	dd if=/dev/sdx of=/path/to/image
+or for compression:
+	dd if=/dev/sdx | gzip > /path/to/image.gz
+Where sdx is your SD card.
+
+To restore the backup you reverse the commands:
+	dd if=/path/to/image of=/dev/sdx
+or when compressed:
+	gzip -dc /path/to/image.gz | dd of=/dev/sdx 
+
+sudo dd if=/dev/sdb of=/home/a/raspi-python.img bs=4M
+
+
+gnome-desktop-item-edit ~/Desktop/ --create-new
+
+ps aux | grep ardupilot | awk '{print $2}' | xargs kill

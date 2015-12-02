@@ -1,0 +1,224 @@
+			if you activate already installed sitl comp then
+			copy and paste one-liner-command ;)
+
+gnome-terminal --title=Flight-Gear-Term --geometry=60x10 --hide-menubar -x sh -c "cd ardupilot32/Tools/autotest && ./fg_quad_view.sh ;bash" && sleep 3 && gnome-terminal --title=Task-Manager --geometry=150x30 --hide-menubar -x sh -c "htop ;bash" &&  gnome-terminal --title=MavProxy --geometry=90x30 --hide-menubar -x sh -c "cd ardupilot32/ArduCopter && sim_vehicle.sh --console --map --aircraft test --quadcopter ;bash"
+
+
+
+
+			if not - do ahead :
+			
+retrieve installation of ubuntu 14.04
+press power to awake computer ;)
+
+now serios :)
+
+install ubuntu 14.04
+
+!!!Caution!!!
+if in some step ,you get errors in type of permissions , never do "sudo -s"
+*NEVER* work as root !!!
+put "sudo " as prefix to every command you enter ,feel freely to overload :)
+
+goto shell by pressing CTRL+ALT+t
+	sudo apt-get update
+	sudo apt-get install synaptic
+	sudo apt-get install vnc4server
+	sudo apt-get install flightgear
+	(sudo chmod 777 -R /usr/share/games/flightgear/ to install scenery)
+	sudo apt-get install gnome-search-tool
+	sudo apt-get install gnome-session-fallback
+
+logout and login with change desktop enviroment to : "gnome flashback-metacity"
+
+!create desktop link with:
+	gnome-desktop-item-edit ~/Desktop/ --create-new
+
+goto shell by pressing CTRL+ALT+t
+	git clone https://github.com/diydrones/ardupilot.git
+
+change above directory name to ardupilot32git
+
+	ardupilot32git/Tools/scripts/install-prereqs-ubuntu.sh -y
+
+download the stable v3.2 :
+	https://github.com/diydrones/ardupilot/tree/ArduCopter-3.2
+and extract to ~/
+change above extracted directory name to ardupilot32
+
+***we will work only on the "ardupilot32"
+the git is only for referance and git pulling
+
+	cd ardupilot32/ArduCopter
+ignore any error like :"fatal: Not a git repository (or any of the parent directories): .git"
+	make configure
+	make clean
+	make sitl
+
+	cd
+	git clone git://github.com/tridge/jsbsim.git
+	sudo apt-get install libtool automake autoconf libexpat1-dev
+
+	sudo apt-get install python-matplotlib python-serial python-wxgtk2.8 python-lxml
+	sudo apt-get install python-scipy python-opencv ccache gawk git python-pip
+	sudo pip install pymavlink MAVProxy
+
+download:
+	https://pypi.python.org/packages/source/M/MAVProxy/MAVProxy-1.4.0.tar.gz
+and extract it 
+from the extracted ,copy MAVProxy directory ,to ~/
+
+!note : the above folder just for backup and code viewing.
+	the already installed placed in
+		/usr/local/lib/python2.7/dist-packages/MAVProxy/
+	and mavproxy.py sites in :
+		/usr/local/bin/mavproxy.py
+
+Add the following lines to the end of your “.bashrc” in your home directory (notice the . on the start of that filename).
+use: "gedit .bashrc" from ~ directory.
+
+	export PATH=$PATH:$HOME/ardupilot32/Tools/autotest
+	export PATH=$PATH:$HOME/MAVProxy
+	export PATH=$PATH:$HOME/mavlink/pymavlink/examples
+	export PATH=$PATH:$HOME/jsbsim/src
+	export PATH=/usr/lib/ccache:$PATH
+
+Then reload your PATH by using the “dot” command in a terminal
+
+	. ~/.bashrc
+then
+	cd jsbsim
+	./autogen.sh
+	make
+
+	cd ~
+	cd ardupilot32/ArduCopter
+
+	make configure
+	sim_vehicle.sh -w
+
+close the terminal ,that will kill the 2-3 screens of simulator
+the above was for initializing the default parameters.
+if not done good -you may catch missionplannerHUD error like "rc" or "ins" errors
+
+goto ~/ardupilot32/Tools/autotest/sim_vehicle.sh
+and change the line 45 to look like
+	options="$options --out 127.0.0.1:14550 --out 192.168.1.200:14550"
+when the second "out", is for mission-planner in other computer
+
+!!!
+need only once per install:
+
+check that the file "~/ardupilot32/Tools/autotest$ ./fg_quad_view.sh" looks like
+
+		#!/bin/sh
+
+		AUTOTESTDIR=$(dirname $0)
+
+		nice fgfs \
+			--native-fdm=socket,in,10,,5503,udp \
+			--fdm=external \
+			--aircraft=arducopter \
+			--control=mouse \
+			--fg-aircraft="$AUTOTESTDIR/aircraft" \
+			#--disable-intro-music \
+			--airport=YKRY \
+			--geometry=650x550 \
+			--bpp=32 \
+			--disable-anti-alias-hud \
+			--disable-hud-3d \
+			--disable-horizon-effect \
+			--timeofday=noon \
+			--disable-sound \
+			--disable-fullscreen \
+			--disable-random-objects \
+			--disable-ai-models \
+			--fog-disable \
+			--disable-specular-highlight \
+			#--disable-skyblend \
+			--disable-anti-alias-hud \
+			--wind=0@0 \
+			$*
+
+and then
+
+	To get joystick running:
+	1. sudo apt-get install jstest-gtk
+	2. sudo apt-get install python-pygame
+	3. sudo chmod 777 -R /usr/local/lib
+	4. Open jstest-GUI from ubuntu-start-menu/system-tools and find the name of 
+		the joystick that is connected to ubuntu. (eg. /dev/input/js0
+	5. Add an entry for your joystick in: 
+	"/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_joystick.py"
+
+	For our laboratory joystick, the entry is:
+		'Logitech Logitech Extreme 3D':
+			# has 8 usable axes.
+		[(0, 500, 1500),
+		 (1, -500, 1500),
+		 (3, -500, 1500),
+		 (2, 500, 1500),
+		 (4, 500, 1500),
+		 (5, 500, 1500)],
+
+
+	(when Start SITL Type: module load joystick)
+
+
+open terminal aside and run $ ./fg_quad_view.sh
+	~/ardupilot32/Tools/autotest$ ./fg_quad_view.sh
+
+!!!
+
+	cd /ardupilot32/Tools/autotest
+
+After the default parameters are loaded you can start the simulator normally:
+(step that was done also ,but not sure if that influance... : BTW !!! YES !!!
+in missionPlanner i've uploaded full-param-list 
+from /arducopter32/Tools/autotest/copter_params.parm and done "write" params)
+
+	sim_vehicle.sh --console --map --aircraft test  --quadcopter
+
+The sim_vehicle.sh has many useful options. Please run it with the -h option to 
+get some help on available options.
+
+and Walla ! you got +3 screens:
+	"ardupilot" is the elf
+	"simulator" is the jsbsim
+	"the above terminal you working from" is the mavproxy
+	"map" is from mavproxy plugin
+
+-----------------------
+
+in the mavproxy terminal :
+	module load joystick
+	
+	wp load ../Tools/autotest/ArduPlane-Missions/CMAC-toff-loop.txt
+	
+	in missionPlanner:
+		go to /config-tuning/full-param-list/ and find ARMING_CHECK ,change to 0
+	
+	the mavProxy now in stabilize.
+	press enter in mavProxy to look at current state...
+	
+	click Arm/Disarm to enage motors
+	and through mavProxy ,enter "rc 3 1500" 
+	if you'l not put rc channel 3 around 1500 ,the quadcopter will stay grounded
+	and disarm after few seconds !!!
+	
+	the quad will takeoff ,and will drift to some direction
+	
+	you can change to loiter to hold pos and alt
+	or auto to navigate WP's.
+
+and play around (look at http://tridge.github.io/MAVProxy/ )
+	rtl
+	auto
+	param set SIM_RC_FAIL 1
+	rc 3 900
+	param set SIM_ACC_RND 3
+	
+look at the amperage , 24Amper for flight ,20Amper for descand , 3A on ground...
+click arm/disarm to shutdown props.
+
+done.

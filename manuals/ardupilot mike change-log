@@ -1,0 +1,39 @@
+"c"(change)|"a"(add)|"r"(remove)@ line xx
+
+20141116:
+
+in /ardupilot32/mk/board_avr.mk
+c@line 149:
+	all: $(SKETCHELF) $(SKETCHEEP) $(SKETCHHEX)
+	avr-size --mcu=atmega2560 -C $(SRCROOT)/$(SKETCH).APMbuild/$(SKETCH).elf
+a@line 15
+	WARNFLAGS      +=   -Wformat-nonliteral -Wunused-function
+ line17
+	WARNFLAGSCXX   +=   -Wformat-nonliteral -Wunused-function
+
+a@line 155 ,upload w/o verifies
+	 -F -V 
+
+in /ardupilot32/mk/environ.mk
+c@line 149:
+	#mike
+	BUILDROOT		:=	$(abspath $(SRCROOT)/$(SKETCH).APMbuild)
+
+in /ardupilot32/mk/px4_targets.mk
+a@line 67:
+	$(v) rm -rf $(SKETCHBOOK)/$(SKETCH)/px4fmu-v1_APM.build
+	$(v) cp -rf $(PX4_ROOT)/Build/px4fmu-v1_APM.build/ $(SKETCHBOOK)/$(SKETCH)/
+	$(v) cp $(PX4_ROOT)/Build/px4fmu-v1_APM.build/firmware.elf $(SKETCHBOOK)/$(SKETCH)/px4v1.elf
+a@line 78:
+	$(v) rm -rf $(SKETCHBOOK)/$(SKETCH)/px4fmu-v2_APM.build
+	$(v) cp -rf $(PX4_ROOT)/Build/px4fmu-v2_APM.build/ $(SKETCHBOOK)/$(SKETCH)/
+	$(v) cp $(PX4_ROOT)/Build/px4fmu-v2_APM.build/firmware.elf $(SKETCHBOOK)/$(SKETCH)/px4v2.elf
+a@line 116:
+	$(v) rm -rf $(SKETCHBOOK)/$(SKETCH)/px4io-v1_default.build
+	$(v) cp -rf $(PX4_ROOT)/Build/px4io-v1_default.build/ $(SKETCHBOOK)/$(SKETCH)/
+
+a@line 133:
+	$(v) rm -rf $(SKETCHBOOK)/$(SKETCH)/px4io-v2_default.build
+	$(v) cp -rf $(PX4_ROOT)/Build/px4io-v2_default.build/ $(SKETCHBOOK)/$(SKETCH)/
+
+

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+gnome-terminal --title=Flight-Gear-Term --geometry=60x10 --hide-menubar -x sh -c "cd ardupilot32/Tools/autotest && ./fg_quad_view.sh ;bash" && sleep 5 &&  gnome-terminal --title=MavProxy --geometry=90x30 --hide-menubar -x sh -c "cd ardupilot32/ArduCopter && sim_vehicle.sh -L Lab --console --map --aircraft test --quadcopter ;bash"
+
+
+# && gnome-terminal --title=Task-Manager --geometry=150x30 --hide-menubar -x sh -c "htop ;bash"

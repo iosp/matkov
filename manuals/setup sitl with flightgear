@@ -1,0 +1,127 @@
+Following is how I set up the simulation software. I hope this will serve as a tutorial once I get past that final problem.
+
+ 
+
+Open a terminal console window.
+Make a new folder for simulation software and enter the directory:
+
+	mkdir sitl
+	cd sitl
+Install prerequisites, if missing:
+
+	sudo apt-get install git python-serial g++ autoconf libtool automake gawk
+Download MAVProxy, mavlink, JSBSim and APM:
+
+	git clone git://github.com/tridge/MAVProxy.git
+	git clone git://github.com/tridge/mavlink.git
+	git clone git://github.com/tridge/jsbsim.git
+	git clone https://code.google.com/p/ardupilot-mega/
+Build and install JSBSim:
+
+	cd jsbsim
+	./autogen.sh
+	./configure --enable-libraries --enable-shared --prefix=/opt/jsbsim
+	make
+	sudo make install
+	cd ..
+Build ArduPlane and ArduCopter binaries and copy them from temporary folder:
+
+	cd ardupilot-mega/ArduPlane
+	make -f ../libraries/Desktop/Makefile.desktop
+	cd ../..
+	cp /tmp/ArduPlane.build/ArduPlane.elf .
+	cd ardupilot-mega/ArduCopter
+	make -f ../libraries/Desktop/Makefile.desktop
+	cd ../..
+	cp /tmp/ArduCopter.build/ArduPlane.elf .
+Install flightgear:
+
+	sudo apt-get install flightgear
+
+Now, because JSBSim did not install it's binaries in the system folders when I ran "make install", 
+I have to make sure that the binaries can be found by simulation scripts. As a temporary hack, I added 
+the following folder to the $PATH variable: "~/sitl/uav/sitl/jsbsim/src". This is where the compiled but 
+uninstalled JSBSim executable is located.
+
+
+I tried to run the simulation, following this tutorial. Opening four separate terminal tabs, I launched 
+these executables, in order.
+
+First terminal:
+
+	cd sitl/ardupilot-mega/Tools/autotest
+	./fg_plane_view.sh
+Second:
+
+	cd sitl
+	./ArduPlane.elf
+Third:
+
+	cd sitl/MAVProxy
+	./mavproxy.py --master tcp:127.0.0.1:5760 --sitl 127.0.0.1:5501
+Fourth:
+
+	cd sitl/ardupilot-mega/Tools/autotest/jsbsim
+	./runsim.py --home=-35.362938,149.165085,584,270 --script=jsbsim/rascal_test.xml --fgout=127.0.0.1:5503
+
+Note that if you execute "./fg_plane_view.sh" last, then FlightGear gets stuck at loading scenery.
+
+
+
+---------------------------------------
+
+Can you control the plane if you feed ArduPilot RC commands via MAVProxy as described in the link you 
+provided that details the expected output? E.g. what happens if you enter 'rc 3 1400' into your MAVlink 
+connected on 5763?
+
+Try entering 'auto' into the MAVlink connected on 5763. The plane should start flying counter clockwise and you should get the following feedback:
+
+auto
+MANUAL> APM: command received:
+APM: Returning to Home
+APM: Executing nav command ID #17
+Got MAVLink msg: COMMAND_ACK {command : 300, result : 0}
+
+The simplest way to get a reasonable set of parameters is to do this in mavproxy:
+
+    param load ~/px4/ardupilot32/Tools/autotest/ArduPlane.parm
+
+that will load the parameters that we use in autotest.
+
+
+-----------------------------
+mat mike:
+changed file "fg_plane_view.sh" to:
+
+	#!/bin/sh
+
+	AUTOTESTDIR=$(dirname $0)
+
+	#lab :removed fgfs
+	#nice fgfs \
+	fgfs   --native-fdm=socket,in,10,,5503,udp \
+	    --fdm=external \
+	    #--aircraft=Rascal110-JSBSim \
+	    --aircraft=arducopter \
+	    #--control=mouse \
+	    --fg-aircraft="$AUTOTESTDIR/aircraft/arducopter" \
+	    --airport=YKRY \
+	    --geometry=650x550 \
+	    --bpp=32 \
+	    --disable-anti-alias-hud \
+	    --disable-hud-3d \
+	    --disable-horizon-effect \
+	    --timeofday=noon \
+	    --disable-sound \
+	    --disable-fullscreen \
+	    --disable-random-objects \
+	    --disable-ai-models \
+	    --fog-disable \
+	    --disable-specular-highlight \
+	    --disable-anti-alias-hud \
+	    --wind=0@0 \
+	    $*
+
+=======================================================================
+
+

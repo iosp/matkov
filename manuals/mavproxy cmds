@@ -1,0 +1,61 @@
+LOITER> help
+accelcal        : do 3D accelerometer calibration
+alias           : command aliases
+alt             : show altitude information
+	Altitude:  100.0
+	QNH Estimate: 1010.2 millibars
+	
+arm             : arm motors
+auxopt          : select option for aux switches on CH7 and CH8 (ArduCopter only)
+bat             : show battery information
+calpress        : calibrate pressure sensors
+changealt       : change target altitude
+compassmot      : do compass/motor interference calibration
+disarm          : disarm motors
+fence           : geo-fence management
+ground          : do a ground start
+guided          : fly to a clicked location on map
+	Usage: guided ALTITUDE | guided LAT LON ALTITUDE
+
+land            : auto land
+level           : set level on a multicopter
+link            : link control
+log             : log file handling
+map             : map control
+mode            : mode change
+module          : module commands
+output          : output control
+	3 outputs
+		0: 127.0.0.1:14550
+		1: 192.168.1.200:14550
+		2: 192.168.1.101:14550
+
+param           : parameter handling
+rally           : rally point control
+rc              : RC input control
+	Usage: rc <channel|all> <pwmvalue>
+
+reboot          : reboot autopilot
+relay           : relay commands
+reset           : reopen the connection to the MAVLink master
+script          : run a script of MAVProxy commands
+	usage: script <filename>
+	
+servo           : servo commands
+set             : mavproxy settings
+setspeed        : do_change_speed
+setup           : go into setup mode
+setyaw          : condition_yaw
+shell           : run shell command
+status          : show status
+switch          : flight mode switch control
+takeoff         : takeoff
+	Usage: takeoff ALTITUDE_IN_METERS
+	
+terrain         : terrain control
+time            : show autopilot time
+tuneopt         : Select option for Tune Pot on Channel 6 (quadcopter only)
+up              : adjust pitch trim by up to 5 degrees
+watch           : watch a MAVLink pattern
+wp              : waypoint management
+
